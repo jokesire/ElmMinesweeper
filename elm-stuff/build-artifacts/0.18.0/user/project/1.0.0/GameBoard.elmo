@@ -1,0 +1,263 @@
+var _user$project$GameBoard$setMines = F2(
+	function (list, board) {
+		return A3(
+			_elm_lang$core$List$foldl,
+			function (_p0) {
+				var _p1 = _p0;
+				return A2(
+					_chendrix$elm_matrix$Matrix$set,
+					A2(_chendrix$elm_matrix$Matrix$loc, _p1._0, _p1._1),
+					A2(_user$project$Tile$Tile, _user$project$Tile$Unsearched, _user$project$Tile$Mine));
+			},
+			board,
+			list);
+	});
+var _user$project$GameBoard$gameover = function (board) {
+	return A2(
+		_chendrix$elm_matrix$Matrix$map,
+		function (tile) {
+			return _user$project$Tile$isMine(tile) ? _user$project$Tile$search(tile) : tile;
+		},
+		board);
+};
+var _user$project$GameBoard$isTile = function (x) {
+	var _p2 = x;
+	if (_p2.ctor === 'Just') {
+		return _p2._0;
+	} else {
+		return _elm_lang$core$Native_Utils.crashCase(
+			'GameBoard',
+			{
+				start: {line: 54, column: 3},
+				end: {line: 56, column: 50}
+			},
+			_p2)('error: isRow Nothing');
+	}
+};
+var _user$project$GameBoard$getTile = F2(
+	function (_p4, board) {
+		var _p5 = _p4;
+		return A2(
+			_chendrix$elm_matrix$Matrix$get,
+			A2(_chendrix$elm_matrix$Matrix$loc, _p5._0, _p5._1),
+			board);
+	});
+var _user$project$GameBoard$adjacentTiles = F2(
+	function (location, board) {
+		var _p6 = location;
+		var x = _p6._0;
+		var y = _p6._1;
+		return A2(
+			_elm_lang$core$List$filterMap,
+			function (loc) {
+				return A2(_user$project$GameBoard$getTile, loc, board);
+			},
+			{
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: x - 1, _1: y - 1},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: x - 1, _1: y},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: x - 1, _1: y + 1},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: x, _1: y - 1},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: x, _1: y + 1},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: x + 1, _1: y - 1},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: x + 1, _1: y},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: x + 1, _1: y + 1},
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			});
+	});
+var _user$project$GameBoard$sumAdjacent = F3(
+	function (location, tile, board) {
+		if (_user$project$Tile$isMine(tile)) {
+			return tile;
+		} else {
+			var listTiles = A2(_user$project$GameBoard$adjacentTiles, location, board);
+			var sum1 = A3(
+				_elm_lang$core$List$foldl,
+				F2(
+					function (tile, sum) {
+						return _user$project$Tile$isMine(tile) ? (sum + 1) : sum;
+					}),
+				0,
+				listTiles);
+			return _user$project$Tile$value(sum1);
+		}
+	});
+var _user$project$GameBoard$addWarnings = function (board) {
+	return A2(
+		_chendrix$elm_matrix$Matrix$mapWithLocation,
+		F2(
+			function (location, tile) {
+				return A3(_user$project$GameBoard$sumAdjacent, location, tile, board);
+			}),
+		board);
+};
+var _user$project$GameBoard$searchTile = F2(
+	function (_p7, board) {
+		var _p8 = _p7;
+		var _p12 = _p8._1;
+		var _p11 = _p8._0;
+		var tile = A2(
+			_user$project$GameBoard$getTile,
+			{ctor: '_Tuple2', _0: _p11, _1: _p12},
+			board);
+		var _p9 = tile;
+		if (_p9.ctor === 'Just') {
+			var _p10 = _p9._0;
+			return _user$project$Tile$isUnsearched(_p10) ? (_user$project$Tile$isMine(_p10) ? _user$project$GameBoard$gameover(board) : A3(
+				_chendrix$elm_matrix$Matrix$set,
+				A2(_chendrix$elm_matrix$Matrix$loc, _p11, _p12),
+				_user$project$Tile$search(_p10),
+				board)) : board;
+		} else {
+			return board;
+		}
+	});
+var _user$project$GameBoard$numberOfMines = 130;
+var _user$project$GameBoard$numberOfRows = 16;
+var _user$project$GameBoard$numberOfColumns = 30;
+var _user$project$GameBoard$emptyBoard = A3(
+	_chendrix$elm_matrix$Matrix$matrix,
+	_user$project$GameBoard$numberOfRows,
+	_user$project$GameBoard$numberOfColumns,
+	function (location) {
+		return _user$project$Tile$empty;
+	});
+var _user$project$GameBoard$randomLocGen = function (seed) {
+	var _p13 = A2(
+		_elm_lang$core$Random$step,
+		A2(
+			_elm_lang$core$Random$list,
+			_user$project$GameBoard$numberOfMines,
+			A2(
+				_elm_lang$core$Random$pair,
+				A2(_elm_lang$core$Random$int, 0, _user$project$GameBoard$numberOfRows - 1),
+				A2(_elm_lang$core$Random$int, 0, _user$project$GameBoard$numberOfColumns - 1))),
+		_elm_lang$core$Random$initialSeed(seed));
+	var result = _p13._0;
+	var newseed = _p13._1;
+	return result;
+};
+var _user$project$GameBoard$addMines = function (board) {
+	return A2(
+		_user$project$GameBoard$setMines,
+		_user$project$GameBoard$randomLocGen(321),
+		board);
+};
+var _user$project$GameBoard$init = _user$project$GameBoard$addWarnings(
+	_user$project$GameBoard$addMines(_user$project$GameBoard$emptyBoard));
+var _user$project$GameBoard$restart = function (board) {
+	return _user$project$GameBoard$addWarnings(
+		_user$project$GameBoard$addMines(_user$project$GameBoard$emptyBoard));
+};
+var _user$project$GameBoard$update = F2(
+	function (msg, board) {
+		var _p14 = msg;
+		if (_p14.ctor === 'Search') {
+			return A2(_user$project$GameBoard$searchTile, _p14._0, board);
+		} else {
+			return _user$project$GameBoard$restart(board);
+		}
+	});
+var _user$project$GameBoard$Restart = {ctor: 'Restart'};
+var _user$project$GameBoard$Search = F2(
+	function (a, b) {
+		return {ctor: 'Search', _0: a, _1: b};
+	});
+var _user$project$GameBoard$view = function (board) {
+	var l = F2(
+		function (location, tile) {
+			return A2(
+				_elm_lang$html$Html$map,
+				_user$project$GameBoard$Search(
+					{
+						ctor: '_Tuple2',
+						_0: _chendrix$elm_matrix$Matrix$row(location),
+						_1: _chendrix$elm_matrix$Matrix$col(location)
+					}),
+				_user$project$Tile$view(tile));
+		});
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$img,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$src('/logo.png'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$alt('logo'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$width(750),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$height(200),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				{ctor: '[]'}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{ctor: '[]'},
+					A2(
+						_elm_lang$core$List$map,
+						_elm_lang$html$Html$div(
+							{ctor: '[]'}),
+						_chendrix$elm_matrix$Matrix$toList(
+							A2(_chendrix$elm_matrix$Matrix$mapWithLocation, l, board)))),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$button,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onClick(_user$project$GameBoard$Restart),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('restart'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
+var _user$project$GameBoard$main = _elm_lang$html$Html$beginnerProgram(
+	{model: _user$project$GameBoard$init, view: _user$project$GameBoard$view, update: _user$project$GameBoard$update})();

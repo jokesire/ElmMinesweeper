@@ -1,0 +1,147 @@
+var _user$project$Tile$mineStyle = _elm_lang$html$Html_Attributes$style(
+	{
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'width', _1: '25px'},
+		_1: {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'height', _1: '25px'},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'red'},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'vertical-align', _1: 'top'},
+					_1: {ctor: '[]'}
+				}
+			}
+		}
+	});
+var _user$project$Tile$myStyle = function (color) {
+	return _elm_lang$html$Html_Attributes$style(
+		{
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'width', _1: '25px'},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'height', _1: '25px'},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'background-color', _1: color},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'vertical-align', _1: 'top'},
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		});
+};
+var _user$project$Tile$isUnsearched = function (_p0) {
+	var _p1 = _p0;
+	var _p2 = _p1.state;
+	if (_p2.ctor === 'Unsearched') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var _user$project$Tile$isZero = function (_p3) {
+	var _p4 = _p3;
+	var _p5 = _p4.tval;
+	if ((_p5.ctor === 'NumWarning') && (_p5._0 === 0)) {
+		return true;
+	} else {
+		return false;
+	}
+};
+var _user$project$Tile$isMine = function (_p6) {
+	var _p7 = _p6;
+	var _p8 = _p7.tval;
+	if (_p8.ctor === 'Mine') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var _user$project$Tile$Tile = F2(
+	function (a, b) {
+		return {state: a, tval: b};
+	});
+var _user$project$Tile$Unsearched = {ctor: 'Unsearched'};
+var _user$project$Tile$Searched = {ctor: 'Searched'};
+var _user$project$Tile$search = function (_p9) {
+	var _p10 = _p9;
+	return A2(_user$project$Tile$Tile, _user$project$Tile$Searched, _p10.tval);
+};
+var _user$project$Tile$update = F2(
+	function (msg, _p11) {
+		var _p12 = _p11;
+		var _p13 = _p12.state;
+		if (_p13.ctor === 'Searched') {
+			return _p12;
+		} else {
+			return A2(_user$project$Tile$Tile, _user$project$Tile$Searched, _p12.tval);
+		}
+	});
+var _user$project$Tile$NumWarning = function (a) {
+	return {ctor: 'NumWarning', _0: a};
+};
+var _user$project$Tile$empty = {
+	state: _user$project$Tile$Unsearched,
+	tval: _user$project$Tile$NumWarning(0)
+};
+var _user$project$Tile$value = function (x) {
+	return {
+		state: _user$project$Tile$Unsearched,
+		tval: _user$project$Tile$NumWarning(x)
+	};
+};
+var _user$project$Tile$Mine = {ctor: 'Mine'};
+var _user$project$Tile$mine = {state: _user$project$Tile$Unsearched, tval: _user$project$Tile$Mine};
+var _user$project$Tile$Search = {ctor: 'Search'};
+var _user$project$Tile$view = function (_p14) {
+	var _p15 = _p14;
+	var _p16 = _p15.state;
+	if (_p16.ctor === 'Searched') {
+		var _p17 = _p15.tval;
+		if (_p17.ctor === 'Mine') {
+			return A2(
+				_elm_lang$html$Html$button,
+				{
+					ctor: '::',
+					_0: _user$project$Tile$mineStyle,
+					_1: {ctor: '[]'}
+				},
+				{ctor: '[]'});
+		} else {
+			return A2(
+				_elm_lang$html$Html$button,
+				{
+					ctor: '::',
+					_0: _user$project$Tile$myStyle('white'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						_elm_lang$core$Basics$toString(_p17._0)),
+					_1: {ctor: '[]'}
+				});
+		}
+	} else {
+		return A2(
+			_elm_lang$html$Html$button,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Events$onClick(_user$project$Tile$Search),
+				_1: {
+					ctor: '::',
+					_0: _user$project$Tile$myStyle('grey'),
+					_1: {ctor: '[]'}
+				}
+			},
+			{ctor: '[]'});
+	}
+};
+var _user$project$Tile$main = _elm_lang$html$Html$beginnerProgram(
+	{model: _user$project$Tile$mine, view: _user$project$Tile$view, update: _user$project$Tile$update})();
