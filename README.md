@@ -1,4 +1,5 @@
 # Minesweeper Implementation in Elm
+Devan McCallum
 Final Project for PFP Spring 2018
 
 Completed:
